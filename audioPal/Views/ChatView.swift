@@ -92,24 +92,24 @@ struct ChatView: View {
                                 .animation(.easeOut(duration: 1.5), value: glowOpacity)
                             
                                                         // Main mic button
-                            Button(action: {
+                        Button(action: {
                                 if viewModel.isRecording {
                                     viewModel.stopRecording()
                                     stopMicAnimation()
                                 } else {
-                                    viewModel.startRecording { text in
+                            viewModel.startRecording { text in
                                         // Handle the transcribed text
                                         // print("Transcribed text: \(text)")
                                     }
                                     startMicAnimation()
-                                }
-                            }) {
+                            }
+                        }) {
                                 Image(systemName: viewModel.isRecording ? "stop.fill" : "mic.fill")
-                                    .font(.system(size: 24))
+                                .font(.system(size: 24))
                                     .foregroundColor(.white)
                                     .padding(12)
                                     .background(viewModel.isRecording ? Color.red : Color.blue)
-                                    .clipShape(Circle())
+                                .clipShape(Circle())
                             }
                             .scaleEffect(micButtonScale)
                             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: micButtonScale)
