@@ -47,10 +47,26 @@ struct MessageBubble: View {
             Text(message.content)
                 .strikethrough(shouldShowError)
             
-            if let duration = message.recordingDuration {
-                Text(formatDuration(duration))
-                    .font(.caption)
-                    .foregroundColor(textColor.opacity(0.7))
+            HStack(spacing: 8) {
+                if let duration = message.recordingDuration {
+                    Text(formatDuration(duration))
+                        .font(.caption)
+                        .foregroundColor(textColor.opacity(0.7))
+                }
+                
+                if let method = message.transcriptionMethod {
+                    HStack(spacing: 4) {
+                        Image(systemName: method.icon)
+                            .font(.caption)
+                        Text(method.rawValue)
+                            .font(.caption)
+                    }
+                    .foregroundColor(method.color)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(method.color.opacity(0.2))
+                    .cornerRadius(8)
+                }
             }
         }
         .padding(.horizontal, 16)

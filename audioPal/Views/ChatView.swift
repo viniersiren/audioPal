@@ -3,6 +3,7 @@ import SwiftUI
 struct ChatView: View {
     @StateObject private var viewModel = ChatViewModel()
     @State private var showHistory = false
+    @State private var showSettings = false
     @State private var micButtonScale: CGFloat = 1.0
     @State private var glowOpacity: Double = 0.0
     @State private var glowScale: CGFloat = 1.0
@@ -13,15 +14,24 @@ struct ChatView: View {
                 VStack(spacing: 0) {
                     ScrollViewReader { proxy in
                         ScrollView {
-                            if viewModel.messages.isEmpty {
+                            if viewModel.messages.isEmpty && !viewModel.isRecording {
                                 VStack(spacing: 16) {
                                     Spacer()
                                     Text("Tap the microphone to start recording")
                                         .font(.headline)
                                                     .foregroundColor(.blue)
-                                    Text("Your speech will be converted to text and saved")
+                                    Text("Your speech will be converted to text using on-device recognition")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
+                                    if !viewModel.hasValidOpenAIKey {
+                                        Text("Add OpenAI API key in settings for Whisper API transcription")
+                                            .font(.caption)
+                                            .foregroundColor(.orange)
+                                        Button("Open Settings") {
+                                            showSettings = true
+                                        }
+                                        .buttonStyle(.bordered)
+                                    }
                                     Spacer()
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -68,7 +78,19 @@ struct ChatView: View {
                             }
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            //VoiceSelectionView(viewModel: viewModel) // deprecated 
+                            HStack(spacing: 8) {
+                                if viewModel.hasValidOpenAIKey {
+                                    Image(systemName: "sparkles")
+                                        .foregroundColor(.orange)
+                                        .font(.caption)
+                                }
+                                Button(action: {
+                                    showSettings = true
+                                }) {
+                                    Image(systemName: "gearshape")
+                                        .foregroundColor(.blue)
+                                }
+                            }
                         }
                     }
 
@@ -93,15 +115,15 @@ struct ChatView: View {
                             
                                                         // Main mic button
                         Button(action: {
-                                if viewModel.isRecording {
-                                    viewModel.stopRecording()
-                                    stopMicAnimation()
-                                } else {
+                            if viewModel.isRecording {
+                                viewModel.stopRecording()
+                                stopMicAnimation()
+                            } else {
                             viewModel.startRecording { text in
-                                        // Handle the transcribed text
-                                        // print("Transcribed text: \(text)")
-                                    }
-                                    startMicAnimation()
+                                    // Handle the transcribed text
+                                    // print("Transcribed text: \(text)")
+                                }
+                                startMicAnimation()
                             }
                         }) {
                                 Image(systemName: viewModel.isRecording ? "stop.fill" : "mic.fill")
@@ -110,7 +132,7 @@ struct ChatView: View {
                                     .padding(12)
                                     .background(viewModel.isRecording ? Color.red : Color.blue)
                                 .clipShape(Circle())
-                            }
+                        }
                             .scaleEffect(micButtonScale)
                             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: micButtonScale)
                         }
@@ -152,9 +174,12 @@ struct ChatView: View {
             }
             .navigationTitle("Speech to Text")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $showSettings) {
+                SettingsView(chatViewModel: viewModel)
+            }
         }
-    }
-    
+}
+
     // MARK: - Animation Methods
     
     private func startMicAnimation() {
@@ -166,9 +191,9 @@ struct ChatView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 micButtonScale = 1.0
-            }
-        }
-        
+    }
+}
+
         // Start glowing animation
         startGlowAnimation()
     }
@@ -185,7 +210,7 @@ struct ChatView: View {
             glowScale = 1.0
         }
     }
-    
+
     private func startGlowAnimation() {
         // Reset glow state
         glowOpacity = 0.0
@@ -203,8 +228,8 @@ struct ChatView: View {
         // Fade out glow
         withAnimation(.easeOut(duration: 1.5).delay(0.3)) {
             glowOpacity = 0.0
-        }
-        
+}
+
         // Reset glow scale
         withAnimation(.easeOut(duration: 1.5).delay(1.5)) {
             glowScale = 1.0
@@ -215,8 +240,8 @@ struct ChatView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
                 if viewModel.isRecording {
                     startGlowAnimation()
-                }
-            }
+    }
+}
         }
     }
 }
@@ -243,5 +268,5 @@ struct ProcessingSegmentBubble: View {
             Spacer()
         }
         .padding(.horizontal)
+        }
     }
-}
