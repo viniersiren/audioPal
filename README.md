@@ -25,41 +25,6 @@
 1. Configuration of the widget is optional since it is not fully functioal
 2. You can set your whisper api key in settings otherwise it falls back to local transcription.
 
-## Project Structure
-
-```
-audioPal/
-├── App/
-│   ├── audioPalApp.swift          # Main app entry point
-│   └── ContentView.swift          # Root view
-├── ViewModels/
-│   └── ChatViewModel.swift        # Main view model for chat functionality
-├── Views/
-│   ├── ChatView.swift             # Main chat interface
-│   ├── MessageBubble.swift        # Individual message display
-│   ├── SettingsView.swift         # App settings
-│   ├── ConversationHistoryView.swift # Conversation list
-│   └── ErrorView.swift            # Error display
-├── Managers/
-│   ├── AudioManager.swift         # Audio session and route management
-│   ├── SpeechRecognitionManager.swift # Speech recognition handling
-│   ├── WhisperAPIManager.swift    # OpenAI Whisper API integration
-│   ├── NetworkQueueManager.swift  # Network request queuing
-│   ├── RecordingManager.swift     # Audio recording management
-│   ├── DeviceManager.swift        # Data persistence
-│   └── KeychainManager.swift      # Secure key storage
-├── Models/
-│   ├── Message.swift              # Message data model
-│   ├── Conversation.swift         # Conversation data model
-│   ├── AudioQuality.swift         # Audio quality settings
-│   ├── QueueStatus.swift          # Network queue status
-│   ├── ChatError.swift            # Error types
-│   └── PendingTranscription.swift # Queue item model
-└── audioPalWidget/                # iOS Widget extension
-    ├── audioPalWidget.swift       # Widget main view
-    ├── audioPalWidgetLiveActivity.swift # Live activity
-    └── audioPalWidgetControl.swift # Widget controls
-```
 
 
 The app follows the MVVM (Model-View-ViewModel) pattern with clear separation of concerns:

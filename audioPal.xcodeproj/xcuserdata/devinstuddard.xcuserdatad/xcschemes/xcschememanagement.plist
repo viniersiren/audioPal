@@ -9,6 +9,34 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>audioPalWidgetExtension.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>98EE8DB52E14D001006BCC59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>98EE8DC52E14D005006BCC59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>98EE8DCF2E14D005006BCC59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>98EE8E322E19C899006BCC59</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 	</dict>
 </dict>
 </plist>

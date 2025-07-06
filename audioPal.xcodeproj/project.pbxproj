@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		98EE8E362E19C89A006BCC59 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EE8E352E19C89A006BCC59 /* WidgetKit.framework */; };
+		98EE8E382E19C89A006BCC59 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98EE8E372E19C89A006BCC59 /* SwiftUI.framework */; };
+		98EE8E492E19C89F006BCC59 /* audioPalWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 98EE8E332E19C899006BCC59 /* audioPalWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		98EE8DC72E14D005006BCC59 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,36 @@
 			remoteGlobalIDString = 98EE8DB52E14D001006BCC59;
 			remoteInfo = audioPal;
 		};
+		98EE8E472E19C89F006BCC59 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98EE8DAE2E14D001006BCC59 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 98EE8E322E19C899006BCC59;
+			remoteInfo = audioPalWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		98EE8E4E2E19C89F006BCC59 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				98EE8E492E19C89F006BCC59 /* audioPalWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		98EE8DB62E14D001006BCC59 /* audioPal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = audioPal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98EE8DC62E14D005006BCC59 /* audioPalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = audioPalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		98EE8DD02E14D005006BCC59 /* audioPalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = audioPalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		98EE8E332E19C899006BCC59 /* audioPalWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = audioPalWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		98EE8E352E19C89A006BCC59 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		98EE8E372E19C89A006BCC59 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +66,13 @@
 				Info.plist,
 			);
 			target = 98EE8DB52E14D001006BCC59 /* audioPal */;
+		};
+		98EE8E4D2E19C89F006BCC59 /* Exceptions for "audioPalWidget" folder in "audioPalWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 98EE8E322E19C899006BCC59 /* audioPalWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +93,14 @@
 		98EE8DD32E14D005006BCC59 /* audioPalUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = audioPalUITests;
+			sourceTree = "<group>";
+		};
+		98EE8E392E19C89A006BCC59 /* audioPalWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				98EE8E4D2E19C89F006BCC59 /* Exceptions for "audioPalWidget" folder in "audioPalWidgetExtension" target */,
+			);
+			path = audioPalWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +127,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		98EE8E302E19C899006BCC59 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				98EE8E382E19C89A006BCC59 /* SwiftUI.framework in Frameworks */,
+				98EE8E362E19C89A006BCC59 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -91,6 +145,8 @@
 				98EE8DB82E14D001006BCC59 /* audioPal */,
 				98EE8DC92E14D005006BCC59 /* audioPalTests */,
 				98EE8DD32E14D005006BCC59 /* audioPalUITests */,
+				98EE8E392E19C89A006BCC59 /* audioPalWidget */,
+				98EE8E342E19C899006BCC59 /* Frameworks */,
 				98EE8DB72E14D001006BCC59 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +157,18 @@
 				98EE8DB62E14D001006BCC59 /* audioPal.app */,
 				98EE8DC62E14D005006BCC59 /* audioPalTests.xctest */,
 				98EE8DD02E14D005006BCC59 /* audioPalUITests.xctest */,
+				98EE8E332E19C899006BCC59 /* audioPalWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		98EE8E342E19C899006BCC59 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				98EE8E352E19C89A006BCC59 /* WidgetKit.framework */,
+				98EE8E372E19C89A006BCC59 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +181,12 @@
 				98EE8DB22E14D001006BCC59 /* Sources */,
 				98EE8DB32E14D001006BCC59 /* Frameworks */,
 				98EE8DB42E14D001006BCC59 /* Resources */,
+				98EE8E4E2E19C89F006BCC59 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				98EE8E482E19C89F006BCC59 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				98EE8DB82E14D001006BCC59 /* audioPal */,
@@ -176,6 +244,28 @@
 			productReference = 98EE8DD02E14D005006BCC59 /* audioPalUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		98EE8E322E19C899006BCC59 /* audioPalWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 98EE8E4A2E19C89F006BCC59 /* Build configuration list for PBXNativeTarget "audioPalWidgetExtension" */;
+			buildPhases = (
+				98EE8E2F2E19C899006BCC59 /* Sources */,
+				98EE8E302E19C899006BCC59 /* Frameworks */,
+				98EE8E312E19C899006BCC59 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				98EE8E392E19C89A006BCC59 /* audioPalWidget */,
+			);
+			name = audioPalWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = audioPalWidgetExtension;
+			productReference = 98EE8E332E19C899006BCC59 /* audioPalWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +287,9 @@
 						CreatedOnToolsVersion = 16.0;
 						TestTargetID = 98EE8DB52E14D001006BCC59;
 					};
+					98EE8E322E19C899006BCC59 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 				};
 			};
 			buildConfigurationList = 98EE8DB12E14D001006BCC59 /* Build configuration list for PBXProject "audioPal" */;
@@ -216,6 +309,7 @@
 				98EE8DB52E14D001006BCC59 /* audioPal */,
 				98EE8DC52E14D005006BCC59 /* audioPalTests */,
 				98EE8DCF2E14D005006BCC59 /* audioPalUITests */,
+				98EE8E322E19C899006BCC59 /* audioPalWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +330,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		98EE8DCE2E14D005006BCC59 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		98EE8E312E19C899006BCC59 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +367,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		98EE8E2F2E19C899006BCC59 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +386,11 @@
 			isa = PBXTargetDependency;
 			target = 98EE8DB52E14D001006BCC59 /* audioPal */;
 			targetProxy = 98EE8DD12E14D005006BCC59 /* PBXContainerItemProxy */;
+		};
+		98EE8E482E19C89F006BCC59 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 98EE8E322E19C899006BCC59 /* audioPalWidgetExtension */;
+			targetProxy = 98EE8E472E19C89F006BCC59 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -415,6 +528,7 @@
 				INFOPLIST_FILE = audioPal/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record your speech and convert it to text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to convert your spoken words into text.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -447,6 +561,7 @@
 				INFOPLIST_FILE = audioPal/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs microphone access to record your speech and convert it to text.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to convert your spoken words into text.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -537,6 +652,60 @@
 			};
 			name = Release;
 		};
+		98EE8E4B2E19C89F006BCC59 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YU8Q6NLNRB;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = audioPalWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = audioPalWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = testaaa.audioPal.audioPalWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		98EE8E4C2E19C89F006BCC59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YU8Q6NLNRB;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = audioPalWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = audioPalWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = testaaa.audioPal.audioPalWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -572,6 +741,15 @@
 			buildConfigurations = (
 				98EE8DE12E14D005006BCC59 /* Debug */,
 				98EE8DE22E14D005006BCC59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		98EE8E4A2E19C89F006BCC59 /* Build configuration list for PBXNativeTarget "audioPalWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98EE8E4B2E19C89F006BCC59 /* Debug */,
+				98EE8E4C2E19C89F006BCC59 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
