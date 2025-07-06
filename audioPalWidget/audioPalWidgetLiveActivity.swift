@@ -19,6 +19,7 @@ struct audioPalWidgetAttributes: ActivityAttributes {
     var name: String
 }
 
+// Temporarily disabled to fix main symbol conflict
 struct audioPalWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: audioPalWidgetAttributes.self) { context in

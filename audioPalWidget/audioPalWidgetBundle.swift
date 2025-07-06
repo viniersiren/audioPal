@@ -9,10 +9,8 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct audioPalWidgetBundle: WidgetBundle {
+struct audioPalWidgetExtension: WidgetBundle {
     var body: some Widget {
         audioPalWidget()
-        audioPalWidgetControl()
-        audioPalWidgetLiveActivity()
     }
 }

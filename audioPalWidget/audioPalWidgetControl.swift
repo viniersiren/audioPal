@@ -9,6 +9,7 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
+// Temporarily disabled to fix main symbol conflict
 struct audioPalWidgetControl: ControlWidget {
     static let kind: String = "testaaa.audioPal.audioPalWidget"
 

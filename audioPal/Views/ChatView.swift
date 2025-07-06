@@ -10,7 +10,7 @@ struct ChatView: View {
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .leading) { // Align content to the left for the slide-in
+            ZStack(alignment: .leading) {
                 VStack(spacing: 0) {
                     ScrollViewReader { proxy in
                         ScrollView {
@@ -19,7 +19,7 @@ struct ChatView: View {
                                     Spacer()
                                     Text("Tap the microphone to start recording")
                                         .font(.headline)
-                                                    .foregroundColor(.blue)
+                                        .foregroundColor(.blue)
                                     Text("Your speech will be converted to text using on-device recognition")
                                         .font(.subheadline)
                                         .foregroundColor(.gray)
@@ -42,15 +42,12 @@ struct ChatView: View {
                                         MessageBubble(message: message, viewModel: viewModel)
                                             .id(message.id)
                                     }
-                                    if viewModel.isThinking {
-                                        ThinkingBubble()
-                                    }
+
                                     if viewModel.isProcessingSegment {
                                         ProcessingSegmentBubble()
                                     }
                                 }
                             }
-                            //.padding() // Removed padding here to let bubbles control their padding
                         }
                         .onChange(of: viewModel.messages.count) { _ in
                             if let lastMessage = viewModel.messages.last {
@@ -105,7 +102,6 @@ struct ChatView: View {
 
                     HStack(alignment: .center, spacing: 20) {
                         ZStack {
-                            // Glowing circle effect
                             Circle()
                                 .fill(Color.blue.opacity(0.3))
                                 .scaleEffect(glowScale)
@@ -113,38 +109,32 @@ struct ChatView: View {
                                 .animation(.easeOut(duration: 1.5), value: glowScale)
                                 .animation(.easeOut(duration: 1.5), value: glowOpacity)
                             
-                                                        // Main mic button
-                        Button(action: {
-                            if viewModel.isRecording {
-                                viewModel.stopRecording()
-                                stopMicAnimation()
-                            } else {
-                            viewModel.startRecording { text in
-                                    // Handle the transcribed text
-                                    // print("Transcribed text: \(text)")
+                            Button(action: {
+                                if viewModel.isRecording {
+                                    viewModel.stopRecording()
+                                    stopMicAnimation()
+                                } else {
+                                    viewModel.startRecording { text in
+                                    }
+                                    startMicAnimation()
                                 }
-                                startMicAnimation()
-                            }
-                        }) {
+                            }) {
                                 Image(systemName: viewModel.isRecording ? "stop.fill" : "mic.fill")
-                                .font(.system(size: 24))
+                                    .font(.system(size: 24))
                                     .foregroundColor(.white)
                                     .padding(12)
                                     .background(viewModel.isRecording ? Color.red : Color.blue)
-                                .clipShape(Circle())
-                        }
+                                    .clipShape(Circle())
+                            }
                             .scaleEffect(micButtonScale)
                             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: micButtonScale)
                         }
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 12)
-
                 }
 
-                // Conditional presentation of history view
                 if showHistory {
-                    // Semi-transparent overlay to capture taps outside history view
                     Color.black.opacity(0.3)
                         .ignoresSafeArea()
                         .onTapGesture {
@@ -155,22 +145,19 @@ struct ChatView: View {
                     
                     GeometryReader { geometry in
                         ConversationHistoryView(viewModel: viewModel)
-                            .frame(width: geometry.size.width * 0.8) // Changed to 80% width
-                            .transition(.move(edge: .leading)) // Use move transition from leading edge
-                            .zIndex(1) // Ensure it's above other content
-                            // .offset(x: 0, y: geometry.safeAreaInsets.top + 56) // Position below the toolbar - managed by ZStack alignment
+                            .frame(width: geometry.size.width * 0.80)
+                            .transition(.move(edge: .leading))
+                            .zIndex(1)
                             .overlay(
                                 Rectangle()
                                     .frame(width: 1)
                                     .foregroundColor(.blue.opacity(0.3)),
                                 alignment: .trailing
                             )
-                            .background(Color(UIColor.systemBackground)) // Add background to history view
+                            .background(Color(UIColor.systemBackground))
                     }
                     .ignoresSafeArea(.container, edges: .vertical)
                 }
-
-
             }
             .navigationTitle("Speech to Text")
             .navigationBarTitleDisplayMode(.inline)
@@ -178,12 +165,9 @@ struct ChatView: View {
                 SettingsView(chatViewModel: viewModel)
             }
         }
-}
-
-    // MARK: - Animation Methods
+    }
     
     private func startMicAnimation() {
-        // Button press animation
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             micButtonScale = 0.9
         }
@@ -191,20 +175,17 @@ struct ChatView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 micButtonScale = 1.0
-    }
-}
+            }
+        }
 
-        // Start glowing animation
         startGlowAnimation()
     }
     
     private func stopMicAnimation() {
-        // Reset button scale
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             micButtonScale = 1.0
         }
         
-        // Stop glowing
         withAnimation(.easeOut(duration: 0.3)) {
             glowOpacity = 0.0
             glowScale = 1.0
@@ -212,11 +193,9 @@ struct ChatView: View {
     }
 
     private func startGlowAnimation() {
-        // Reset glow state
         glowOpacity = 0.0
         glowScale = 1.0
         
-        // Start glow animation
         withAnimation(.easeOut(duration: 0.3)) {
             glowOpacity = 1.0
         }
@@ -225,23 +204,20 @@ struct ChatView: View {
             glowScale = 2.0
         }
         
-        // Fade out glow
         withAnimation(.easeOut(duration: 1.5).delay(0.3)) {
             glowOpacity = 0.0
-}
+        }
 
-        // Reset glow scale
         withAnimation(.easeOut(duration: 1.5).delay(1.5)) {
             glowScale = 1.0
         }
         
-        // Repeat animation if still recording
         if viewModel.isRecording {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
                 if viewModel.isRecording {
                     startGlowAnimation()
-    }
-}
+                }
+            }
         }
     }
 }
@@ -268,5 +244,5 @@ struct ProcessingSegmentBubble: View {
             Spacer()
         }
         .padding(.horizontal)
-        }
     }
+}

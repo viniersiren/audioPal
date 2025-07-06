@@ -30,9 +30,7 @@ struct MessageBubble: View {
             VStack(alignment: alignment, spacing: 4) {
                 messageContent
                 
-                if !message.isUser {
-                    messageActions
-                }
+                messageActions
             }
             
             if !message.isUser {
@@ -44,8 +42,15 @@ struct MessageBubble: View {
     
     private var messageContent: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(message.content)
-                .strikethrough(shouldShowError)
+            HStack {
+                Text(message.content)
+                    .strikethrough(shouldShowError)
+                
+                Spacer()
+                
+                // Play button inside the message
+                playButton
+            }
             
             HStack(spacing: 8) {
                 if let duration = message.recordingDuration {
@@ -90,8 +95,10 @@ struct MessageBubble: View {
     
     private var messageActions: some View {
         HStack(spacing: 16) {
-            playButton
-            copyButton
+            if !message.isUser {
+                // For non-user messages, show copy button below the message
+                copyButton
+            }
         }
         .padding(.top, 8)
     }
@@ -104,14 +111,25 @@ struct MessageBubble: View {
                 viewModel.speakMessage(message.content)
             }
         }) {
-            Image(systemName: viewModel.synthesizer.isSpeaking ? "stop.fill" : "play.fill")
-                .font(.system(size: 20))
-                .foregroundColor(.blue)
-                .frame(width: 44, height: 44)
-                .background(Color.blue.opacity(0.1))
-                .clipShape(Circle())
+            Group {
+                if viewModel.synthesizer.isSpeaking {
+                    // Loading spinner while speaking
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: textColor))
+                        .scaleEffect(0.8)
+                } else {
+                    // Play icon when not speaking
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(textColor)
+                }
+            }
+            .frame(width: 32, height: 32)
+            .background(textColor.opacity(0.1))
+            .clipShape(Circle())
         }
         .buttonStyle(ScaleButtonStyle())
+        .disabled(viewModel.synthesizer.isSpeaking) // Prevent re-clicking while speaking
     }
     
     private var copyButton: some View {

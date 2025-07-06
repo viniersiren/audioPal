@@ -47,10 +47,12 @@ struct ConversationHistoryView: View {
             conversation.date >= dateRange.start && conversation.date < dateRange.end
         }
         
+        let sortedConversations = filteredByDate.sorted { $0.date > $1.date } // Sort newest to oldest
+        
         if searchText.isEmpty {
-            return filteredByDate
+            return sortedConversations
         } else {
-            return filteredByDate.filter { conversation in
+            return sortedConversations.filter { conversation in
                 conversation.title.localizedCaseInsensitiveContains(searchText) ||
                 conversation.messages.contains { message in
                     message.content.localizedCaseInsensitiveContains(searchText)
@@ -138,13 +140,6 @@ struct ConversationHistoryView: View {
             }
             .navigationTitle("Conversations")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
         }
         .sheet(item: $exportData) { data in
             ExportSheet(exportData: data)

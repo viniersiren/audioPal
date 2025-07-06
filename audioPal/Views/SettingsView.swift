@@ -42,8 +42,8 @@ struct SettingsView: View {
                 
                 Section(header: Text("Audio Quality Settings")) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Picker("Recording Quality", selection: $chatViewModel.audioQuality) {
-                            ForEach(ChatViewModel.AudioQuality.allCases, id: \.self) { quality in
+                        Picker("Recording Quality", selection: $chatViewModel.audioManager.audioQuality) {
+                            ForEach(AudioQuality.allCases, id: \.self) { quality in
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack {
                                         Text(quality.rawValue)
@@ -61,8 +61,8 @@ struct SettingsView: View {
                             }
                         }
                         .pickerStyle(.wheel)
-                        .onChange(of: chatViewModel.audioQuality) { newQuality in
-                            chatViewModel.saveAudioQuality(newQuality)
+                        .onChange(of: chatViewModel.audioManager.audioQuality) { newQuality in
+                            chatViewModel.audioManager.saveAudioQuality(newQuality)
                         }
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -75,7 +75,7 @@ struct SettingsView: View {
                                     Text("Sample Rate")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
-                                    Text("\(chatViewModel.audioQuality.settings[AVSampleRateKey] as? Int ?? 0) Hz")
+                                    Text("\(chatViewModel.audioManager.audioQuality.settings[AVSampleRateKey] as? Int ?? 0) Hz")
                                         .font(.caption)
                                         .fontWeight(.medium)
                                 }
@@ -86,7 +86,7 @@ struct SettingsView: View {
                                     Text("Bit Rate")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
-                                    Text("\(chatViewModel.audioQuality.settings[AVEncoderBitRateKey] as? Int ?? 0) kbps")
+                                    Text("\(chatViewModel.audioManager.audioQuality.settings[AVEncoderBitRateKey] as? Int ?? 0) kbps")
                                         .font(.caption)
                                         .fontWeight(.medium)
                                 }
@@ -97,7 +97,7 @@ struct SettingsView: View {
                                     Text("Channels")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
-                                    Text("\(chatViewModel.audioQuality.settings[AVNumberOfChannelsKey] as? Int ?? 1)")
+                                    Text("\(chatViewModel.audioManager.audioQuality.settings[AVNumberOfChannelsKey] as? Int ?? 1)")
                                         .font(.caption)
                                         .fontWeight(.medium)
                                 }
@@ -146,13 +146,13 @@ struct SettingsView: View {
     }
     
     private func loadCurrentAPIKey() {
-        if let currentKey = chatViewModel.openAIKey {
+        if let currentKey = chatViewModel.whisperAPIManager.openAIKey {
             apiKey = currentKey
         }
     }
     
     private func saveAPIKey() {
-        let success = chatViewModel.saveOpenAIKey(apiKey)
+        let success = chatViewModel.whisperAPIManager.saveOpenAIKey(apiKey)
         
         if success {
             alertMessage = "API key saved successfully! You can now use speech-to-text features."
