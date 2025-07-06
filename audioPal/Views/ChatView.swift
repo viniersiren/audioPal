@@ -155,7 +155,7 @@ struct ChatView: View {
                     
                     GeometryReader { geometry in
                         ConversationHistoryView(viewModel: viewModel)
-                            .frame(width: geometry.size.width * 0.48) // Changed to 40% width
+                            .frame(width: geometry.size.width * 0.8) // Changed to 80% width
                             .transition(.move(edge: .leading)) // Use move transition from leading edge
                             .zIndex(1) // Ensure it's above other content
                             // .offset(x: 0, y: geometry.safeAreaInsets.top + 56) // Position below the toolbar - managed by ZStack alignment

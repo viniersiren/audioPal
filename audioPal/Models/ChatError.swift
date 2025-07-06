@@ -9,7 +9,7 @@ enum ChatError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            return "Permission denied. Please allow microphone access in Settings."
+            return "Microphone or Speech Recognition permission denied"
         case .speechRecognitionError(let message):
             return "Speech recognition error: \(message)"
         case .audioSessionError(let message):
@@ -22,7 +22,7 @@ enum ChatError: LocalizedError {
     var recoverySuggestion: String? {
         switch self {
         case .permissionDenied:
-            return "Go to Settings > Privacy & Security > Microphone and enable access for this app."
+            return "Go to Settings > Privacy & Security > Microphone and Speech Recognition to enable access for this app."
         case .speechRecognitionError:
             return "Please try again or check your internet connection."
         case .audioSessionError:

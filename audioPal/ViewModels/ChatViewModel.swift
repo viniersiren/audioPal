@@ -43,6 +43,8 @@ class ChatViewModel: NSObject, ObservableObject {
     @Published var synthesizer: AVSpeechSynthesizer = AVSpeechSynthesizer()
     @Published var queueStatus: QueueStatus = .idle
     @Published var currentAudioRoute: String = "Unknown"
+    @Published var microphonePermissionStatus: AVAudioSession.RecordPermission = .undetermined
+    @Published var speechRecognitionPermissionStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
     private var audioLevelTimer: Timer?
     private var recordingTimer: Timer?
     private var recordingStartTime: Date?
@@ -401,6 +403,9 @@ class ChatViewModel: NSObject, ObservableObject {
         // Initialize audio route display
         updateAudioRouteDisplay()
         
+        // Check current permission status
+        checkPermissionStatus()
+        
         // Start with an empty conversation
         startNewConversation()
         
@@ -517,6 +522,7 @@ class ChatViewModel: NSObject, ObservableObject {
         
         if shouldUseWhisper {
             // Add to transcription queue for concurrent processing
+            // Keep isProcessingSegment true until Whisper API completes
             addToTranscriptionQueue(audioFileURL: currentAudioFileURL!, originalText: originalText, duration: segmentDuration)
         } else {
             // Use local transcription if:
@@ -556,9 +562,11 @@ class ChatViewModel: NSObject, ObservableObject {
         currentAudioFileURL = nil
         retryAudioFileURL = nil // Clean up retry audio file
         
-        // Hide processing indicator after a short delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.isProcessingSegment = false
+        // Hide processing indicator after a short delay (only for local transcriptions)
+        if !usedWhisper {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.isProcessingSegment = false
+            }
         }
     }
     
@@ -728,6 +736,14 @@ class ChatViewModel: NSObject, ObservableObject {
     func startRecording(completion: @escaping (String) -> Void) {
         print("🎤 Starting recording")
         
+        // Check permissions first
+        if !canStartRecording() {
+            print("❌ Missing required permissions")
+            requestPermissionsIfNeeded()
+            error = .permissionDenied
+            return
+        }
+        
         // Reset speech recognition components
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         recognitionRequest = nil
@@ -736,48 +752,16 @@ class ChatViewModel: NSObject, ObservableObject {
         
         guard let speechRecognizer = speechRecognizer, speechRecognizer.isAvailable else {
             print("❌ Speech recognizer not available")
+            error = .speechRecognitionError("Speech recognizer not available")
             return
         }
         
-        // Request speech recognition permission first
-        SFSpeechRecognizer.requestAuthorization { [weak self] status in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                switch status {
-                case .authorized:
-                    // Now request microphone permission
-                    AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
-                        guard let self = self else { return }
-                        
-                        DispatchQueue.main.async {
-                            if granted {
-                                print("✅ Microphone permission granted")
-                                self.isRecording = true
-                                self.startRecordingTimer()
-                                self.setupAudioSession()
-                                self.startSpeechRecognition(completion: completion)
-                            } else {
-                                print("❌ Microphone permission denied")
-                                self.error = .permissionDenied
-                            }
-                        }
-                    }
-                case .denied:
-                    print("❌ Speech recognition denied")
-                    self.error = .permissionDenied
-                case .restricted:
-                    print("❌ Speech recognition restricted")
-                    self.error = .permissionDenied
-                case .notDetermined:
-                    print("❌ Speech recognition not determined")
-                    self.error = .permissionDenied
-                @unknown default:
-                    print("❌ Speech recognition unknown status")
-                    self.error = .permissionDenied
-                }
-            }
-        }
+        // Start recording since permissions are already granted
+        print("✅ All permissions granted, starting recording")
+        isRecording = true
+        startRecordingTimer()
+        setupAudioSession()
+        startSpeechRecognition(completion: completion)
     }
     
     private func setupAudioSession() {
@@ -1207,6 +1191,8 @@ class ChatViewModel: NSObject, ObservableObject {
                         if whisperText != nil {
                             // Success - create message
                             self.createMessageWithText(whisperText!, duration: pending.duration, usedWhisper: true)
+                            // Hide processing indicator for successful Whisper transcription
+                            self.isProcessingSegment = false
                         } else {
                             // Failed - handle retry logic
                             if pending.retryCount < self.maxWhisperRetries {
@@ -1221,6 +1207,8 @@ class ChatViewModel: NSObject, ObservableObject {
                                 // Max retries reached - use local transcription
                                 print("❌ Max retries reached for transcription - using local fallback")
                                 self.createMessageWithText(pending.originalText, duration: pending.duration, usedWhisper: false)
+                                // Hide processing indicator for failed Whisper transcription
+                                self.isProcessingSegment = false
                             }
                         }
                         
@@ -1344,6 +1332,73 @@ class ChatViewModel: NSObject, ObservableObject {
         }
     }
     
+    // MARK: - Permission Handling
+    
+    private func checkPermissionStatus() {
+        // Check microphone permission status
+        microphonePermissionStatus = AVAudioSession.sharedInstance().recordPermission
+        
+        // Check speech recognition permission status
+        speechRecognitionPermissionStatus = SFSpeechRecognizer.authorizationStatus()
+        
+        print("🔐 Permission Status:")
+        print("   🎤 Microphone: \(microphonePermissionStatus.description)")
+        print("   🗣️ Speech Recognition: \(speechRecognitionPermissionStatus.description)")
+    }
+    
+    func requestPermissionsIfNeeded() {
+        print("🔐 Requesting permissions if needed")
+        
+        // Check if we need to request speech recognition permission
+        if speechRecognitionPermissionStatus == .notDetermined {
+            SFSpeechRecognizer.requestAuthorization { [weak self] status in
+                DispatchQueue.main.async {
+                    self?.speechRecognitionPermissionStatus = status
+                    print("🗣️ Speech recognition permission: \(status.description)")
+                    
+                    if status == .denied || status == .restricted {
+                        self?.error = .permissionDenied
+                    }
+                }
+            }
+        }
+        
+        // Check if we need to request microphone permission
+        if microphonePermissionStatus == .undetermined {
+            AVAudioSession.sharedInstance().requestRecordPermission { [weak self] granted in
+                DispatchQueue.main.async {
+                    self?.microphonePermissionStatus = granted ? .granted : .denied
+                    print("🎤 Microphone permission: \(granted ? "granted" : "denied")")
+                    
+                    if !granted {
+                        self?.error = .permissionDenied
+                    }
+                }
+            }
+        }
+    }
+    
+    func canStartRecording() -> Bool {
+        let hasMicrophonePermission = microphonePermissionStatus == .granted
+        let hasSpeechPermission = speechRecognitionPermissionStatus == .authorized
+        
+        print("🔐 Recording permissions check:")
+        print("   🎤 Microphone: \(hasMicrophonePermission ? "✅" : "❌")")
+        print("   🗣️ Speech Recognition: \(hasSpeechPermission ? "✅" : "❌")")
+        
+        return hasMicrophonePermission && hasSpeechPermission
+    }
+    
+    func openSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+        
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl) { success in
+                print("🔐 Settings opened: \(success)")
+            }
+        }
+    }
+    
     // MARK: - Audio Interruption Monitoring
     
     private func setupAudioInterruptionMonitoring() {
@@ -1355,14 +1410,14 @@ class ChatViewModel: NSObject, ObservableObject {
             guard let self = self else { return }
             
             if let userInfo = notification.userInfo,
-               let reasonValue = userInfo[AVAudioSessionInterruptionReasonKey] as? NSNumber,
-               let reason = AVAudioSession.InterruptionReason(rawValue: reasonValue.uintValue) {
+               let reasonValue = userInfo[AVAudioSessionInterruptionReasonKey] as? NSNumber {
                 
                 // Check if it's a Siri interruption
                 let isSiriInterruption = self.isSiriInterruption(userInfo: userInfo)
                 
+                let reason = reasonValue.uintValue
                 switch reason {
-                case .began:
+                case 1: // AVAudioSession.InterruptionType.began
                     if isSiriInterruption {
                         print("🎤 Siri interruption began")
                         self.handleSiriInterruption()
@@ -1370,7 +1425,7 @@ class ChatViewModel: NSObject, ObservableObject {
                         print("📱 Audio interruption began")
                         self.handleAudioInterruption()
                     }
-                case .ended:
+                case 0: // AVAudioSession.InterruptionType.ended
                     if isSiriInterruption {
                         print("🎤 Siri interruption ended")
                         self.handleSiriInterruptionEnded()
@@ -1379,7 +1434,7 @@ class ChatViewModel: NSObject, ObservableObject {
                         self.handleAudioInterruptionEnded()
                     }
                 default:
-                    print("🎧 Unknown audio interruption reason")
+                    print("🎧 Unknown audio interruption reason: \(reason)")
                 }
             }
         }
@@ -1390,7 +1445,7 @@ class ChatViewModel: NSObject, ObservableObject {
         // Method 1: Check for Siri-specific interruption flags
         if let interruptionTypeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? NSNumber {
             // Siri typically uses specific interruption types
-            return interruptionTypeValue.uintValue == AVAudioSession.InterruptionType.duckOthers.rawValue
+            return interruptionTypeValue.uintValue == 2 // AVAudioSession.InterruptionType.duckOthers
         }
         
         // Method 2: Check for Siri in the interruption description
@@ -1400,13 +1455,13 @@ class ChatViewModel: NSObject, ObservableObject {
         
         // Method 3: Check for system audio interruptions that are likely Siri
         if let interruptionTypeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? NSNumber {
-            let type = AVAudioSession.InterruptionType(rawValue: interruptionTypeValue.uintValue)
-            // Siri often uses duckOthers or beginsOtherAudio
-            return type == .duckOthers || type == .beginsOtherAudio
+            let typeValue = interruptionTypeValue.uintValue
+            // Siri often uses duckOthers (2) or beginsOtherAudio (1)
+            return typeValue == 2 || typeValue == 1
         }
         
         // Method 4: Check for brief interruptions (Siri is usually brief)
-        if let durationValue = userInfo[AVAudioSessionInterruptionDurationKey] as? NSNumber {
+        if let durationValue = userInfo["AVAudioSessionInterruptionDurationKey"] as? NSNumber {
             let duration = durationValue.doubleValue
             // Siri interruptions are typically brief (less than 10 seconds)
             return duration < 10.0
@@ -1452,4 +1507,38 @@ class ChatViewModel: NSObject, ObservableObject {
 
 extension Notification.Name {
     static let audioPlaybackStarted = Notification.Name("audioPlaybackStarted")
+}
+
+// MARK: - Permission Status Extensions
+
+extension AVAudioSession.RecordPermission {
+    var description: String {
+        switch self {
+        case .undetermined:
+            return "Undetermined"
+        case .denied:
+            return "Denied"
+        case .granted:
+            return "Granted"
+        @unknown default:
+            return "Unknown"
+        }
+    }
+}
+
+extension SFSpeechRecognizerAuthorizationStatus {
+    var description: String {
+        switch self {
+        case .notDetermined:
+            return "Not Determined"
+        case .denied:
+            return "Denied"
+        case .restricted:
+            return "Restricted"
+        case .authorized:
+            return "Authorized"
+        @unknown default:
+            return "Unknown"
+        }
+    }
 }
